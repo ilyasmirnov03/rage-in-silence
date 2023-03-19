@@ -1,64 +1,57 @@
 <script>
-  (async () => {
-    let volumeCallback = null;
-    let volumeInterval = null;
-    const volumeVisualizer = document.getElementById("volume-visualizer");
-    const startButton = document.getElementById("start");
-    const stopButton = document.getElementById("stop");
-    // Initialize
-    try {
-      const audioStream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          echoCancellation: true,
-        },
-      });
-      const audioContext = new AudioContext();
-      const audioSource = audioContext.createMediaStreamSource(audioStream);
-      const analyser = audioContext.createAnalyser();
-      analyser.fftSize = 512;
-      analyser.minDecibels = -127;
-      analyser.maxDecibels = 0;
-      analyser.smoothingTimeConstant = 0.4;
-      audioSource.connect(analyser);
-      const volumes = new Uint8Array(analyser.frequencyBinCount);
-      volumeCallback = () => {
-        analyser.getByteFrequencyData(volumes);
-        let volumeSum = 0;
-        for (const volume of volumes) volumeSum += volume;
-        const averageVolume = volumeSum / volumes.length;
-        // Value range: 127 = analyser.maxDecibels - analyser.minDecibels;
-        volumeVisualizer?.style.setProperty(
-          "--volume",
-          (averageVolume * 100) / 127 + "%"
-        );
-      };
-    } catch (e) {
-      console.error(
-        "Failed to initialize volume visualizer, simulating instead...",
-        e
-      );
+  // @ts-nocheck
+
+  let volumePercentage = "0%";
+  let volumeInterval = null;
+
+  async function init() {
+    const audioStream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: true,
+      },
+    });
+    const audioContext = new AudioContext();
+    const audioSource = audioContext.createMediaStreamSource(audioStream);
+    const analyser = audioContext.createAnalyser();
+    analyser.fftSize = 512;
+    analyser.minDecibels = -127;
+    analyser.maxDecibels = 0;
+    analyser.smoothingTimeConstant = 0.4;
+    audioSource.connect(analyser);
+    const volumes = new Uint8Array(analyser.frequencyBinCount);
+    return {volumes, analyser};
+  };
+
+  function volumeCallback(audio) {
+    audio.analyser.getByteFrequencyData(audio.volumes);
+    let volumeSum = 0;
+    for (const volume of audio.volumes) volumeSum += volume;
+    const averageVolume = volumeSum / audio.volumes.length;
+    // Value range: 127 = analyser.maxDecibels - analyser.minDecibels;
+    volumePercentage = (averageVolume * 100) / 127 + "%";
+  }
+
+  async function startListening() {
+    if (volumeInterval === null) {
+      let audio = await init();
+      volumeInterval = setInterval(volumeCallback, 100, audio);
     }
-    // Use
-    startButton?.addEventListener("click", () => {
-      // Updating every 100ms (should be same as CSS transition speed)
-      if (volumeCallback !== null && volumeInterval === null)
-        volumeInterval = setInterval(volumeCallback, 100);
-    });
-    stopButton?.addEventListener("click", () => {
-      if (volumeInterval !== null) {
-        clearInterval(volumeInterval);
-        volumeInterval = null;
-      }
-    });
-  })();
+  }
+
+  function stopListening() {
+    if (volumeInterval !== null) {
+      clearInterval(volumeInterval);
+      volumeInterval = null;
+    }
+  }
 </script>
 
-<div id="volume-visualizer" />
-<button id="start">Start</button>
-<button id="stop">Stop</button>
+<div id="volume-visualizer" style="width:{volumePercentage}" />
+<button on:click={startListening} id="start">Start</button>
+<button on:click={stopListening} id="stop">Stop</button>
 
 <style>
-  div {
+  #volume-visualizer {
     --volume: 0%;
     position: relative;
     width: 200px;
@@ -67,7 +60,7 @@
     background-color: #ddd;
   }
 
-  div::before {
+  #volume-visualizer::before {
     content: "";
     position: absolute;
     top: 0;
