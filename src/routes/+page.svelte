@@ -25,10 +25,12 @@
   function volumeCallback(audio) {
     audio.analyser.getByteFrequencyData(audio.volumes);
     let volumeSum = 0;
+    let screamCounter = 0;
     for (const volume of audio.volumes) volumeSum += volume;
     const averageVolume = volumeSum / audio.volumes.length;
     // Value range: 127 = analyser.maxDecibels - analyser.minDecibels;
-    volumePercentage = (averageVolume * 100) / 127 + "%";
+    volumePercentage = (averageVolume * 100) / 127 * 0.73;
+    console.log(volumePercentage > 80);
   }
 
   async function startListening() {
@@ -46,32 +48,25 @@
   }
 </script>
 
-<div id="volume-visualizer" style="width:{volumePercentage}" />
-<button on:click={startListening} id="start">Start</button>
-<button on:click={stopListening} id="stop">Stop</button>
+<div class="volume__container">
+  <div class="volume__visualizer" style="width:{volumePercentage + "%"}; background-color:hsl({(1 - volumePercentage / 100) * 160}, 100%, 50%)" />
+</div>
+<button on:click={startListening} disabled="{volumeInterval}" class="volume__start">Start</button>
+<button on:click={stopListening} disabled="{!volumeInterval}" class="volume__stop">Stop</button>
 
 <style>
-  #volume-visualizer {
-    --volume: 0%;
-    position: relative;
-    width: 200px;
-    height: 20px;
-    margin: 50px;
+  .volume__container {
+    width:300px;
+    height:20px;
     background-color: #ddd;
+    position: relative;
   }
-
-  #volume-visualizer::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: var(--volume);
-    background-color: green;
-    transition: all 30ms ease-in-out;
-  }
-
-  button {
-    margin-left: 50px;
+  
+  .volume__visualizer {
+    position:absolute;
+    top:0;
+    left:0;
+    z-index:1;
+    height: 20px;
   }
 </style>
