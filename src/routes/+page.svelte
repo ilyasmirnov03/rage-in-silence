@@ -1,6 +1,6 @@
 <script>
   // @ts-nocheck
-
+  Notification.requestPermission();
   let volumePercentage = "0%";
   let volumeInterval = null;
 
@@ -29,6 +29,7 @@
     const averageVolume = volumeSum / audio.volumes.length;
     // Value range: 127 = analyser.maxDecibels - analyser.minDecibels;
     volumePercentage = (averageVolume * 100) / 127 + "%";
+    notificationSender()
   }
 
   async function startListening() {
@@ -44,6 +45,24 @@
       volumeInterval = null;
     }
   }
+  function notificationSender() {
+    if (!('Notification' in window) || !('ServiceWorkerRegistration' in window)) {
+      alert('Persistent Notification API not supported!');
+      return;
+    }
+    
+    try {
+      navigator.serviceWorker.getRegistration()
+        .then((reg) => reg.showNotification("Hello world"))
+        .catch((err) => alert('Service Worker registration error: ' + err));
+    } catch (err) {
+      alert('Notification API error: ' + err);
+    }
+    if (!('Notification' in window)) {
+      alert('Notification API not supported !');
+    }
+  }
+
 </script>
 
 <div id="volume-visualizer" style="width:{volumePercentage}" />
