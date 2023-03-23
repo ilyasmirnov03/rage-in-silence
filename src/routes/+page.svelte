@@ -62,7 +62,6 @@
       const averageVolume = volumeSum / audio.volumes.length;
       // Value range: 127 = analyser.maxDecibels - analyser.minDecibels;
       volumePercentage = (averageVolume * 100) / 127 * 0.73;
-      volumeColor = (1 - volumePercentage / 100) * 96;
       //canvas rendering
       let bars = 90;
       context.clearRect(-200, -200, 500, 500);
