@@ -1,5 +1,8 @@
 <script>
   // @ts-nocheck
+
+  Notification.requestPermission();
+
   import { onMount } from "svelte";
 
   let volumePercentage = "0%";
@@ -10,6 +13,33 @@
   let circleRadius = 75;
   let canvasWidth = 300;
   let canvasHeight = 300;
+
+  async function init() {
+    const audioStream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: true,
+      },
+    });
+    const audioContext = new AudioContext();
+    const audioSource = audioContext.createMediaStreamSource(audioStream);
+    const analyser = audioContext.createAnalyser();
+    analyser.fftSize = 512;
+    analyser.minDecibels = -127;
+    analyser.maxDecibels = 0;
+    analyser.smoothingTimeConstant = 0.4;
+    audioSource.connect(analyser);
+    const volumes = new Uint8Array(analyser.frequencyBinCount);
+    return {volumes, analyser};
+  };
+
+  function volumeCallback(audio) {
+    audio.analyser.getByteFrequencyData(audio.volumes);
+    let volumeSum = 0;
+    for (const volume of audio.volumes) volumeSum += volume;
+    const averageVolume = volumeSum / audio.volumes.length;
+    // Value range: 127 = analyser.maxDecibels - analyser.minDecibels;
+    volumePercentage = (averageVolume * 100) / 127 + "%";
+    notificationSender()
 
   function drawCircle(context) {
     context.beginPath();
@@ -86,6 +116,26 @@
         volumeInterval = setInterval(volumeCallback, 100, audio);
       }
     }
+  }
+  
+  function notificationSender() {
+    if (!('Notification' in window) || !('ServiceWorkerRegistration' in window)) {
+      alert('Persistent Notification API not supported!');
+      return;
+    }
+    
+    try {
+      navigator.serviceWorker.getRegistration()
+        .then((reg) => reg.showNotification("Hello world"))
+        .catch((err) => alert('Service Worker registration error: ' + err));
+    } catch (err) {
+      alert('Notification API error: ' + err);
+    }
+    if (!('Notification' in window)) {
+      alert('Notification API not supported !');
+    }
+  }
+
 </script>
 
 <div class="volume__container">
