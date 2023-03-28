@@ -15,6 +15,18 @@
   let canvasWidth = 300;
   let canvasHeight = 300;
 
+  function hslToHex(percentage, s, l) {
+    const hue = 120 - percentage * 1.2;
+    l /= 100;
+    const a = s * Math.min(l, 1 - l) / 100;
+    const f = n => {
+      const k = (n + hue / 30) % 12;
+      const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+      return Math.round(255 * color).toString(16).padStart(2, '0');   // convert to Hex and prefix "0" if needed
+    };
+    return `#${f(0)}${f(8)}${f(4)}`;
+  }
+
   function drawCircle(context) {
     context.beginPath();
     context.arc(0, 0, circleRadius + 1, 0, 2 * Math.PI);
@@ -79,15 +91,16 @@
       const averageVolume = volumeSum / audio.volumes.length;
       // Value range: 127 = analyser.maxDecibels - analyser.minDecibels;
       volumePercentage = (averageVolume * 100) / 127 * 0.73;
+      context.fillStyle = hslToHex(volumePercentage, 100, 50);
       if (volumePercentage >= volumePercentageCap) {
         notificationSender();
       }
       //canvas rendering
-      let bars = 90;
+      let bars = 45;
       context.clearRect(-200, -200, 500, 500);
       drawCircle(context);
-      for (let i = 0; i < 180; i+= (180/bars)) {
-        let barHeight = audio.volumes[i] / 2;
+      for (let i = 0; i < 90; i+= (90/bars)) {
+        let barHeight = audio.volumes[i+4] / 4;
         let barWidth = 2 * Math.PI * circleRadius / bars;
         context.rotate((Math.PI * 2) / bars);
         context.fillRect(circleRadius, barWidth / 2, barHeight, barWidth);
