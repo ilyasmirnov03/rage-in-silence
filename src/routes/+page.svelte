@@ -1,12 +1,24 @@
 <script>
   // @ts-nocheck
   
-  import { onMount } from "svelte";
-  import DifficultyChoice from "../lib/DifficultyChoice.svelte";
+  //temporary code///
+  let volumePercentageCap = 20;
+  // let volumePercentageCap = 0;
   
+  import { onMount } from "svelte";
+  import Content from "$lib/popup/Content.svelte";
+  import DifficultyChoice from "$lib/DifficultyChoice.svelte";
+  import Modal from "$lib/popup/Modal.svelte";
+
+  import { setContext, getContext } from "svelte"
+  import { isOpen, id } from "./../store.js"
+
+  const modalId = $$props.$$slots.default[0].name;
+	setContext("modalId", modalId)
+
   Notification.requestPermission();
   let volumePercentage = "0%";
-  let volumePercentageCap = 0;
+  
   let volumeInterval = null;
   //canvas global variables
   let canvas;
@@ -33,17 +45,11 @@
     context.fill();
   }
 
-  function notificationSender() {
-    if (!('Notification' in window)) {
-      alert('Notification API not supported!');
-      return;
-    }
-    
-    try {
-      let notification = new Notification("Be QUIET!!!");
-    } catch (err) {
-      alert('Notification API error: ' + err);
-    }
+  function punishment() {
+    console.log($id);    
+    $id = modalId;
+    console.log($id);    
+    navigator.vibrate(10000);
   }
 
   onMount(() => {
@@ -93,7 +99,7 @@
       volumePercentage = (averageVolume * 100) / 127 * 0.73;
       context.fillStyle = hslToHex(volumePercentage, 100, 50);
       if (volumePercentage >= volumePercentageCap) {
-        notificationSender();
+        punishment();
       }
       //canvas rendering
       let bars = 45;
@@ -138,6 +144,11 @@
   </label>
 </div>
 
+<Modal>
+  <Content>
+		<h1>Hello</h1>
+	</Content>
+</Modal>
 
 <style>
   .volume__container {
