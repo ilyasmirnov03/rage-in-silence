@@ -1,7 +1,14 @@
 * {
-    font-family: Helvetica;
+  --rgb-gamer: linear-gradient(
+    142.23deg,
+    #61e665 13.64%,
+    #6fdcd1 31.58%,
+    #d473d4 49.15%,
+    #f93434 77.55%
+  );
+  font-family: Helvetica;
 }
 
 body {
-    background-color: #131313; 
+  background-color: #1e1e1e;
 }

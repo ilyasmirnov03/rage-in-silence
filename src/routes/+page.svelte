@@ -34,7 +34,7 @@
   }
 
   function notificationSender() {
-    if (!('Notification' in window)) {
+/*     if (!('Notification' in window)) {
       alert('Notification API not supported!');
       return;
     }
@@ -43,8 +43,8 @@
       let notification = new Notification("Be QUIET!!!");
     } catch (err) {
       alert('Notification API error: ' + err);
-    }
-  }
+    }*/
+  } 
 
   onMount(() => {
     context = canvas.getContext('2d');
@@ -91,7 +91,7 @@
       const averageVolume = volumeSum / audio.volumes.length;
       // Value range: 127 = analyser.maxDecibels - analyser.minDecibels;
       volumePercentage = (averageVolume * 100) / 127 * 0.73;
-      context.fillStyle = hslToHex(volumePercentage, 100, 50);
+      context.fillStyle = hslToHex(volumePercentage, 94, 59);
       if (volumePercentage >= volumePercentageCap) {
         notificationSender();
       }
@@ -122,7 +122,7 @@
 
 </script>
 
-<DifficultyChoice bind:percentageCap={volumePercentageCap}></DifficultyChoice>
+
 <div class="volume__container">
   <canvas class="volume__equalizer" bind:this={canvas} width="{canvasWidth}" height="{canvasHeight}"></canvas>
 </div>
@@ -137,6 +137,8 @@
     <span class="t__sr">Power</span>
   </label>
 </div>
+<DifficultyChoice bind:percentageCap={volumePercentageCap}></DifficultyChoice>
+
 
 
 <style>
@@ -157,4 +159,5 @@
     margin: 0;
     padding: 0;
   }
+  .text_
 </style>
