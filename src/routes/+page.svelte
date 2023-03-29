@@ -5,16 +5,13 @@
   let volumePercentageCap = 20;
   // let volumePercentageCap = 0;
   
-  import { onMount } from "svelte";
-  import Content from "$lib/popup/Content.svelte";
   import DifficultyChoice from "$lib/DifficultyChoice.svelte";
-  import Modal from "$lib/popup/Modal.svelte";
+  import Popup from "$lib/Popup.svelte";
+  
+  import { onMount } from "svelte";
+  import { isOpen } from "./../store.js"
 
-  import { setContext, getContext } from "svelte"
-  import { isOpen, id } from "./../store.js"
-
-  const modalId = $$props.$$slots.default[0].name;
-	setContext("modalId", modalId)
+  $isOpen = false;
 
   Notification.requestPermission();
   let volumePercentage = "0%";
@@ -46,9 +43,7 @@
   }
 
   function punishment() {
-    console.log($id);    
-    $id = modalId;
-    console.log($id);    
+    $isOpen = true;
     navigator.vibrate(10000);
   }
 
@@ -98,7 +93,7 @@
       // Value range: 127 = analyser.maxDecibels - analyser.minDecibels;
       volumePercentage = (averageVolume * 100) / 127 * 0.73;
       context.fillStyle = hslToHex(volumePercentage, 100, 50);
-      if (volumePercentage >= volumePercentageCap) {
+      if (volumePercentage >= volumePercentageCap && !$isOpen) {
         punishment();
       }
       //canvas rendering
@@ -144,11 +139,10 @@
   </label>
 </div>
 
-<Modal>
-  <Content>
-		<h1>Hello</h1>
-	</Content>
-</Modal>
+<Popup>
+	<p class="popup__text">Can you stay quiet???</p>
+</Popup>
+
 
 <style>
   .volume__container {
@@ -167,5 +161,10 @@
     border: 0;
     margin: 0;
     padding: 0;
+  }
+
+  .popup__text {
+    color:white;
+    margin-bottom:.5rem;
   }
 </style>
