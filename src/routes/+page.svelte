@@ -1,11 +1,12 @@
 <script>
   // @ts-nocheck
-
-  Notification.requestPermission();
-
+  
   import { onMount } from "svelte";
-
+  import DifficultyChoice from "../lib/DifficultyChoice.svelte";
+  
+  Notification.requestPermission();
   let volumePercentage = "0%";
+  let volumePercentageCap = 0;
   let volumeInterval = null;
   //canvas global variables
   let canvas;
@@ -14,37 +15,35 @@
   let canvasWidth = 300;
   let canvasHeight = 300;
 
-  async function init() {
-    const audioStream = await navigator.mediaDevices.getUserMedia({
-      audio: {
-        echoCancellation: true,
-      },
-    });
-    const audioContext = new AudioContext();
-    const audioSource = audioContext.createMediaStreamSource(audioStream);
-    const analyser = audioContext.createAnalyser();
-    analyser.fftSize = 512;
-    analyser.minDecibels = -127;
-    analyser.maxDecibels = 0;
-    analyser.smoothingTimeConstant = 0.4;
-    audioSource.connect(analyser);
-    const volumes = new Uint8Array(analyser.frequencyBinCount);
-    return {volumes, analyser};
-  };
-
-  function volumeCallback(audio) {
-    audio.analyser.getByteFrequencyData(audio.volumes);
-    let volumeSum = 0;
-    for (const volume of audio.volumes) volumeSum += volume;
-    const averageVolume = volumeSum / audio.volumes.length;
-    // Value range: 127 = analyser.maxDecibels - analyser.minDecibels;
-    volumePercentage = (averageVolume * 100) / 127 + "%";
-    notificationSender()
+  function hslToHex(percentage, s, l) {
+    const hue = 120 - percentage * 1.2;
+    l /= 100;
+    const a = s * Math.min(l, 1 - l) / 100;
+    const f = n => {
+      const k = (n + hue / 30) % 12;
+      const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+      return Math.round(255 * color).toString(16).padStart(2, '0');   // convert to Hex and prefix "0" if needed
+    };
+    return `#${f(0)}${f(8)}${f(4)}`;
+  }
 
   function drawCircle(context) {
     context.beginPath();
     context.arc(0, 0, circleRadius + 1, 0, 2 * Math.PI);
     context.fill();
+  }
+
+  function notificationSender() {
+    if (!('Notification' in window)) {
+      alert('Notification API not supported!');
+      return;
+    }
+    
+    try {
+      let notification = new Notification("Be QUIET!!!");
+    } catch (err) {
+      alert('Notification API error: ' + err);
+    }
   }
 
   onMount(() => {
@@ -92,52 +91,38 @@
       const averageVolume = volumeSum / audio.volumes.length;
       // Value range: 127 = analyser.maxDecibels - analyser.minDecibels;
       volumePercentage = (averageVolume * 100) / 127 * 0.73;
+      context.fillStyle = hslToHex(volumePercentage, 100, 50);
+      if (volumePercentage >= volumePercentageCap) {
+        notificationSender();
+      }
       //canvas rendering
-      let bars = 90;
+      let bars = 45;
       context.clearRect(-200, -200, 500, 500);
       drawCircle(context);
-      for (let i = 0; i < 180; i+= (180/bars)) {
-        let barHeight = audio.volumes[i] / 2;
+      for (let i = 0; i < 90; i+= (90/bars)) {
+        let barHeight = audio.volumes[i+4] / 4;
         let barWidth = 2 * Math.PI * circleRadius / bars;
         context.rotate((Math.PI * 2) / bars);
         context.fillRect(circleRadius, barWidth / 2, barHeight, barWidth);
       }
-    }
-
-    /**
-     * On/off button handler
-     */
-    async function handleListening() {
-      if (volumeInterval !== null) {
-        clearInterval(volumeInterval);
-        volumeInterval = null;
-      } else if (volumeInterval === null) {
-        let audio = await init();
-        volumeInterval = setInterval(volumeCallback, 100, audio);
-      }
-    }
   }
-  
-  function notificationSender() {
-    if (!('Notification' in window) || !('ServiceWorkerRegistration' in window)) {
-      alert('Persistent Notification API not supported!');
-      return;
-    }
-    
-    try {
-      navigator.serviceWorker.getRegistration()
-        .then((reg) => reg.showNotification("Hello world"))
-        .catch((err) => alert('Service Worker registration error: ' + err));
-    } catch (err) {
-      alert('Notification API error: ' + err);
-    }
-    if (!('Notification' in window)) {
-      alert('Notification API not supported !');
+
+  /**
+   * On/off button handler
+   */
+  async function handleListening() {
+    if (volumeInterval !== null) {
+      clearInterval(volumeInterval);
+      volumeInterval = null;
+    } else if (volumeInterval === null) {
+      let audio = await init();
+      volumeInterval = setInterval(volumeCallback, 100, audio);
     }
   }
 
 </script>
 
+<DifficultyChoice bind:percentageCap={volumePercentageCap}></DifficultyChoice>
 <div class="volume__container">
   <canvas class="volume__equalizer" bind:this={canvas} width="{canvasWidth}" height="{canvasHeight}"></canvas>
 </div>
