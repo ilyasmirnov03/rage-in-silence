@@ -155,12 +155,19 @@
 
 
 <style>
+  :root{
+  --main-red: hsl(119, 94%, 59%);
+  --main-green: hsl(119, 94%, 59%);
+  --main-bg: hsl(0, 0%, 12%);
+  }
   .volume__container {
     display:flex;
     justify-content: center;
     padding:1rem 0;
   }
-
+  .t__svg-ring{
+    fill:
+  }
   .volume__button {
     display: flex;
     justify-content: center;
@@ -172,4 +179,5 @@
     margin: 0;
     padding: 0;
   }
+
 </style>
