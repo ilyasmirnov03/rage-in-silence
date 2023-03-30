@@ -1,13 +1,15 @@
 <script>
     // @ts-nocheck
-    export let percentageCap = 0;
+    
+    import { percentageCap } from "./../store.js";
+    
     let style = {
         hsl: `119, 94%, 59%`,
         left: '0%',
         borderRadius: '5vw 0 0 5vw'
     }
     function changeDifficulty (cap, hue, order) {
-        percentageCap = cap;
+        percentageCap.set(cap);
         style = {
             hsl: `${hue}, 94%, 59%`,
             left: order+ '%',
@@ -19,8 +21,8 @@
             style.borderRadius = '0 5vw 5vw 0';
         }
     }
-
 </script>
+
 <p class="difficulty__desc">Please choose a difficulty depending on the type of player you are</p>
 <div class="difficulty__container">
     <div class="difficulty__wrapper"><input type='radio' name='difficulty' value='peaceful' checked on:click={()=> changeDifficulty(70,119,0)}><label for='peaceful'>Peaceful</label></div>
