@@ -9,7 +9,7 @@
 
 <div class="popup" class:hidden={!$isOpen}>
 	<div class="popup__container">
-		<slot class="popup__text" />
+		<slot />
 		<button class="popup__closeButton" on:click={close}>OK</button>
 	</div>
 </div>
