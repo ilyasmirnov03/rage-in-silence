@@ -7,6 +7,7 @@
   import Toggle from "$lib/Toggle.svelte";
 </script>
 
+<h1 class="title">Please, rage in<br><div class="title--styling">SILENCE</div></h1>
 <DifficultyChoice></DifficultyChoice>
 <div class="volume__container">
   <Canvas></Canvas>
@@ -17,10 +18,30 @@
 </Popup>
 
 <style>
+  .title{
+    background:var(--rage-color);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 15vw;
+    text-align: center;
+    margin-top: 5vw;
+    letter-spacing: 1.5vw;
+  }
+  
+  .title--styling{
+    letter-spacing: 7vw;
+    background:var(--rage-color);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+    font-weight: 800;
+    font-size: 20vw;
+    transform: translate(0, -59%);
+  }
+  
   .volume__container {
     display:flex;
     justify-content: center;
-    padding:1rem 0;
   }
 
   .popup__text {

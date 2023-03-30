@@ -1,7 +1,30 @@
+:root {
+  --hue: 223;
+  --offHue: 0;
+  --onHue: 119;
+  --off-set: hsl(var(--offHue), 94%, 59%);
+  --on-set: hsl(var(--onHue), 94%, 59%);
+  --rage-color: linear-gradient(
+    115.05deg,
+    #38f934 21.67%,
+    #ddf934 40.37%,
+    #ddf934 40.37%,
+    #f98734 59.07%,
+    #f93434 76.91%
+  );
+  --gamer-rgb: linear-gradient(
+    142.23deg,
+    #61e665 13.64%,
+    #6fdcd1 31.58%,
+    #d473d4 49.15%,
+    #f93434 77.55%
+  );
+}
+
 * {
-    font-family: 'Chathura';
+  font-family: Chathura;
 }
 
 body {
-    background-color: #131313; 
+  background-color: #1e1e1e;
 }
