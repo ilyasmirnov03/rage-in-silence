@@ -146,17 +146,20 @@
     background:var(--rage-color);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    font-size: 13vw;
+    font-size: 15vw;
     text-align: center;
     margin-top: 5vw;
+    letter-spacing: 1.5vw;
   }
   .title--styling{
-    letter-spacing: 15px;background:var(--rage-color);
+    letter-spacing: 7vw;
+    background:var(--rage-color);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    font-size: 13vw;
     text-align: center;
-    transform: translate(0, -50%);
+    font-weight: 800;
+    font-size: 20vw;
+    transform: translate(0, -59%);
   }
   .volume__container {
     display:flex;
