@@ -1,10 +1,14 @@
-# create-svelte
+# Rage in SILENCE
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+Rage in SILENCE est une application web qui utilise le microphone de votre appareil afin de détecter l'intensité de votre voix.
+Cette application est conçue pour aider les utilisateurs à contrôler leur volume vocal, en particulier lors d'une session de gaming.
 
-## Creating a project
+## Comment ça marche ?
 
-If you're seeing this, you've probably already done this step. Congrats!
+1. Une fois sur le site, autorisez l'application a vous envoyer des notifications. 
+2. Choisissez une difficulté (facile par défaut).
+3. Appuyer sur le bouton rouge on/off pour débuter le jeu et autorisez l'utilisation de votre microphone.
+4. 
 
 ```bash
 # create a new project in the current directory
