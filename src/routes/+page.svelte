@@ -8,11 +8,11 @@
 </script>
 
 <h1 class="title">Please, rage in<br><div class="title--styling">SILENCE</div></h1>
-<DifficultyChoice></DifficultyChoice>
 <div class="volume__container">
   <Canvas></Canvas>
 </div>
 <Toggle></Toggle>
+<DifficultyChoice></DifficultyChoice>
 <Popup>
 	<p class="popup__text">Can you stay quiet???</p>
 </Popup>
