@@ -49,8 +49,8 @@
   onMount(() => {
     context = canvas.getContext('2d');
     context.translate(canvasWidth / 2, canvasHeight / 2);
-    context.strokeStyle = "#fff";
-    context.fillStyle = "#fff";
+    context.strokeStyle = "#38f934";
+    context.fillStyle = "#38f934";
     context.lineWidth = 2;
     drawCircle(context);
   });
@@ -122,7 +122,7 @@
 
 </script>
 
-
+<h1 class="title">Please, rage in<br><div class="title--styling">SILENCE</div></h1>
 <div class="volume__container">
   <canvas class="volume__equalizer" bind:this={canvas} width="{canvasWidth}" height="{canvasHeight}"></canvas>
 </div>
@@ -142,10 +142,25 @@
 
 
 <style>
+  .title{
+    background:var(--rage-color);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 13vw;
+    text-align: center;
+    margin-top: 5vw;
+  }
+  .title--styling{
+    letter-spacing: 15px;background:var(--rage-color);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 13vw;
+    text-align: center;
+    transform: translate(0, -50%);
+  }
   .volume__container {
     display:flex;
     justify-content: center;
-    padding:1rem 0;
   }
 
   .volume__button {
@@ -159,5 +174,5 @@
     margin: 0;
     padding: 0;
   }
-  .text_
+  .popup{}
 </style>

@@ -1,9 +1,4 @@
 :root {
-  --hue: 223;
-  --offHue: 0;
-  --onHue: 119;
-  --off-set: hsl(var(--offHue), 94%, 59%);
-  --on-set: hsl(var(--onHue), 94%, 59%);
   font-size: calc(60px + (90 - 60) * (100vw - 320px) / (1280 - 320));
 }
 .t {
