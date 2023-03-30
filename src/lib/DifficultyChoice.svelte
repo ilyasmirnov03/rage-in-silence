@@ -1,9 +1,10 @@
 <script>
     // @ts-nocheck
-    export let percentageCap = 0;
+
+    import { percentageCap } from "./../store.js";
 
     function changeDifficulty (cap) {
-        percentageCap = cap;
+        percentageCap.set(cap);
     }
 </script>
 
